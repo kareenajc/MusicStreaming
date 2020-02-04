@@ -113,5 +113,4 @@ public class Artist {
     public void setHotttnesss(double hotttnesss) {
         this.hotttnesss = hotttnesss;
     }
-    
 }

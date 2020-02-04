@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.stream.JsonReader;
 import java.io.FileReader;
+import java.util.*;
 
 /**
  *
@@ -28,13 +29,9 @@ public class MusicStreamer {
 //        Gson g = new Gson();
 //        String jsonObj = "{'id':'786876','name':'kjhkj'}";
         try{
-            //reading from .json file and converting a list of json strings to a list of java objects using Gson. 
-            Gson gson = new Gson();
-            JsonReader reader = new JsonReader(new FileReader("C:\\Users\\018639476\\Documents\\NetBeansProjects\\MusicStreamer\\src\\musicstreamer\\music.json"));
-            SongRecord[] data = gson.fromJson(reader, SongRecord[].class);
-            System.out.println(data.length);
-            System.out.println(data[9999].getSong().getLoudness());
-            
+            SongManager sm = new SongManager();
+            List<SongRecord> l = sm.findSongByArtist("Casual");
+            System.out.println(l.get(0).getRelease().getName());
         }
         catch(Exception e)
         {
