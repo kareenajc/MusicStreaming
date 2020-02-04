@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class SongManager {
     List<SongRecord> dataList; //contains the list of all song-records
-    HashMap <String, List<Integer>> songNameMap; //maps the name of an artist (key) to the list of song-records' indexes by that artist (value).
+    HashMap <String, List<Integer>> songArtistMap; //maps the name of an artist (key) to the list of song-records' indexes by that artist (value).
     SongManager() throws FileNotFoundException
     {
         //reading from .json file and converting a list of json strings to a list of java objects using Gson. 
@@ -29,32 +29,32 @@ public class SongManager {
         
         //creating the map <artist-name, song-record-index-list>
         //indeces are based on location of each songRecord in List<SongRecord> dataList
-        songNameMap = new HashMap<>();
+        songArtistMap = new HashMap<>();
         for(int i = 0; i<dataList.size(); i++)
         {
             String key = dataList.get(i).getArtist().getName();
-            if(songNameMap.containsKey(key))//if the key exists
+            if(songArtistMap.containsKey(key))//if the key exists
             {
-                List<Integer> indexList = songNameMap.get(key);//get the existing list (value) for the key
+                List<Integer> indexList = songArtistMap.get(key);//get the existing list (value) for the key
                 indexList.add(i);//append i to existing list
-                songNameMap.put(key, indexList);//replace the old list with updated list for the key in the map
+                songArtistMap.put(key, indexList);//replace the old list with updated list for the key in the map
             }
             else //if key does not exist
             {
                 List<Integer> indexList = new ArrayList<>(); //make a new list for the key
                 indexList.add(i); //add the index to the list
-                songNameMap.put(key, indexList); //add the key and list (value) to the map
+                songArtistMap.put(key, indexList); //add the key and list (value) to the map
             }
         }
     }
 
-    public HashMap<String, List<Integer>> getSongNameMap() {
-        return songNameMap;
+    public HashMap<String, List<Integer>> getSongArtistMap() {
+        return songArtistMap;
     }
     
     public List<SongRecord> findSongByArtist(String artist)
     {
-        List<Integer> l = songNameMap.get(artist);
+        List<Integer> l = songArtistMap.get(artist);
         List<SongRecord> records = new ArrayList<>();
         for(Integer i:l)
         {

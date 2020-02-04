@@ -32,6 +32,7 @@ public class MusicStreamer {
             SongManager sm = new SongManager();
             List<SongRecord> l = sm.findSongByArtist("Casual");
             System.out.println(l.get(0).getRelease().getName());
+            System.out.println(l.get(0).getArtist().getName());
         }
         catch(Exception e)
         {
