@@ -24,22 +24,38 @@ public class User {
         String password = pass;
         HashMap<String, List<Integer>> playlists = new HashMap<String, List<Integer>>(); //key: playlist name. value: list of song indexes
     }
-    
-    /**
-     * Verifies user-entered credentials. Logs user in if the credentials are valid and displays an error message if credentials are invalid.
-     * @param user - username entered by the user
-     * @param pass - password entered by the user
-     */
-    void login(String user, String pass){
-        //check if entered username and password are valid
-        if(this.username.equals(user) && this.password.equals(pass)){
-            //log in
-        }
-        else{
-            //do not log in. display message.
-        }
+
+    public String getfName() {
+        return fName;
     }
-    
+
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
     void createPlaylist(){
         ArrayList<Integer> playlistSongs = new ArrayList<Integer>();
