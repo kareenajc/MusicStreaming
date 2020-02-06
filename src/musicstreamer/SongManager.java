@@ -19,7 +19,7 @@ import java.util.*;
 public class SongManager {
     List<SongRecord> dataList; //contains the list of all song-records
     HashMap <String, List<Integer>> songArtistMap; //maps the name of an artist (key) to the list of song-records' indexes by that artist (value).
-    SongManager() throws FileNotFoundException
+    public SongManager() throws FileNotFoundException
     {
         //reading from .json file and converting a list of json strings to a list of java objects using Gson. 
         Gson gson = new Gson();

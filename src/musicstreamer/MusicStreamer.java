@@ -12,9 +12,9 @@ import java.io.FileReader;
 import java.util.*;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javazoom.jl.player.*;
 import javazoom.jl.decoder.JavaLayerException;
+import UI.Login;
 
 /**
  *
@@ -38,7 +38,8 @@ public class MusicStreamer {
             List<SongRecord> l = sm.findSongByArtist("Casual");
             System.out.println(l.get(0).getRelease().getName());
             System.out.println(l.get(0).getArtist().getName());
-            MusicStreamer.mp3play("data\\SOMZWCG12A8C13C480.mp3");
+            Login loginWin  = new Login();
+            loginWin.setVisible(true);
         }
         catch(Exception e)
         {
@@ -50,12 +51,13 @@ public class MusicStreamer {
      * Play a given audio file.
      * @param audioFilePath Path of the audio file.
      */
-    static void mp3play(String file) {
+    public static Player mp3play(String file) {
         try {
             // It uses CECS327InputStream as InputStream to play the song 
              InputStream is = new CECS327InputStream(file);
              Player mp3player = new Player(is);
-             mp3player.play();
+             //mp3player.play();
+             return mp3player;
 	     }
 	     catch (JavaLayerException exception) 
          {
@@ -64,7 +66,8 @@ public class MusicStreamer {
          catch (IOException exception)
          {
              exception.printStackTrace();
-         }  
+         } 
+        return null;
     }
     
 }
