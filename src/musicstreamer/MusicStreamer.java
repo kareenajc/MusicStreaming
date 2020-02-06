@@ -30,9 +30,24 @@ public class MusicStreamer {
 //        String jsonObj = "{'id':'786876','name':'kjhkj'}";
         try{
             SongManager sm = new SongManager();
+            
+            //test finding songs by artist
             List<SongRecord> l = sm.findSongByArtist("Casual");
-            System.out.println(l.get(0).getRelease().getName());
-            System.out.println(l.get(0).getArtist().getName());
+            //System.out.println(l.get(0).getRelease().getName());
+            //System.out.println(l.get(0).getArtist().getName());
+            System.out.println("---All songs by artist: Casual---");
+            for(int i = 0; i < l.size(); i++)
+            {
+                System.out.println(l.get(i).getSong().getTitle() + " by " + l.get(i).getArtist().getName());
+            }
+            
+            //test find songs by title
+            List<SongRecord> songs = sm.findSongByTitle("Let Me");
+            System.out.println("\n---All songs called 'Let Me'---");
+            for(int i = 0; i < songs.size(); i++)
+            {
+                System.out.println(songs.get(i).getSong().getTitle() + " by " + songs.get(i).getArtist().getName());
+            }
         }
         catch(Exception e)
         {
