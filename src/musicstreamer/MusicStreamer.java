@@ -10,6 +10,11 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.stream.JsonReader;
 import java.io.FileReader;
 import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javazoom.jl.player.*;
+import javazoom.jl.decoder.JavaLayerException;
 
 /**
  *
@@ -48,11 +53,33 @@ public class MusicStreamer {
             {
                 System.out.println(songs.get(i).getSong().getTitle() + " by " + songs.get(i).getArtist().getName());
             }
+
         }
         catch(Exception e)
         {
             System.out.println(e.getMessage());
         }
+    }
+    
+          /**
+     * Play a given audio file.
+     * @param audioFilePath Path of the audio file.
+     */
+    static void mp3play(String file) {
+        try {
+            // It uses CECS327InputStream as InputStream to play the song 
+             InputStream is = new CECS327InputStream(file);
+             Player mp3player = new Player(is);
+             mp3player.play();
+	     }
+	     catch (JavaLayerException exception) 
+         {
+	       exception.printStackTrace();
+	     }
+         catch (IOException exception)
+         {
+             exception.printStackTrace();
+         }  
     }
     
 }
