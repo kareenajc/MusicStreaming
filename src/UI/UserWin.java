@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import musicstreamer.MusicStreamer;
 import musicstreamer.SongManager;
@@ -18,9 +19,37 @@ import musicstreamer.SongRecord;
  *
  * @author 018639476
  */
-public class UserWin extends javax.swing.JFrame {
+
+class MyPlayer implements Runnable
+{
     Player player;
+
+    //recieve a javazoom.jl.player
+    public MyPlayer(String songRecordId) {
+        this.player = MusicStreamer.mp3play("data\\"+songRecordId+".mp3");;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void run() {
+        try {
+            player.play();
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(MyPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+
+public class UserWin extends javax.swing.JFrame {
     String currentRecordId;
+    Thread thread;
 
     /**
      * Creates new form UserWin
@@ -28,7 +57,6 @@ public class UserWin extends javax.swing.JFrame {
     public UserWin() {
         initComponents();
         currentRecordId = "";
-       
     }
 
     /**
@@ -141,25 +169,28 @@ public class UserWin extends javax.swing.JFrame {
     private void playBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playBtnMouseClicked
         // TODO add your handling code here:
         try{
-            player = MusicStreamer.mp3play("data\\"+currentRecordId+".mp3");
-            player.play();
-            songNameLabel.setText("");
+            if(thread==null && currentRecordId!=null && !currentRecordId.equals(""))
+            {
+                MyPlayer myPlayer = new MyPlayer(currentRecordId);
+                thread = new Thread(myPlayer);
+                thread.start();
+            }
         }
         catch(Exception e)
         {
-            
+            System.out.println(e.getMessage());
         }
-        
     }//GEN-LAST:event_playBtnMouseClicked
 
     private void stopBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_stopBtnMouseClicked
         // TODO add your handling code here:
         try{
-            //player.wait(); how to stop player?
+                thread.stop();
+                thread = null;
         }
         catch(Exception e)
         {
-            
+            System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_stopBtnMouseClicked
 
@@ -169,10 +200,18 @@ public class UserWin extends javax.swing.JFrame {
             SongManager sm   = new SongManager();
             String artist = searchArtistTxt.getText();
             List <SongRecord> recordList = sm.findSongByArtist(artist);
+            if (recordList==null || recordList.isEmpty())
+            {
+                songNameLabel.setText("Result Not Found!");
+                thread = null;
+                return;
+            }
             currentRecordId = recordList.get(0).getSong().getId();
             songNameLabel.setText(currentRecordId);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserWin.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            songNameLabel.setText("Result Not Found!");
         }
     }//GEN-LAST:event_searchBtnMouseClicked
 
