@@ -50,7 +50,6 @@ class MyPlayer implements Runnable
 public class UserWin extends javax.swing.JFrame {
     String currentRecordId;
     Thread thread;
-    String state;//stopped, started, paused
 
     /**
      * Creates new form UserWin
@@ -58,8 +57,6 @@ public class UserWin extends javax.swing.JFrame {
     public UserWin() {
         initComponents();
         currentRecordId = "";
-        state = "stopped";
-       
     }
 
     /**
@@ -172,48 +169,28 @@ public class UserWin extends javax.swing.JFrame {
     private void playBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playBtnMouseClicked
         // TODO add your handling code here:
         try{
-            if(thread==null)
+            if(thread==null && currentRecordId!=null && !currentRecordId.equals(""))
             {
                 MyPlayer myPlayer = new MyPlayer(currentRecordId);
                 thread = new Thread(myPlayer);
                 thread.start();
-                state = "started";
-            }
-            else
-            {
-                if(state.equals("paused"))
-                {
-                    thread.notify();
-                    state = "started";
-                }
-                else if(state.equals("stopped"))
-                {
-                    MyPlayer myPlayer = new MyPlayer(currentRecordId);
-                    thread = new Thread(myPlayer);
-                    thread.start();
-                    state = "started";
-                }
             }
         }
         catch(Exception e)
         {
             System.out.println(e.getMessage());
         }
-        
     }//GEN-LAST:event_playBtnMouseClicked
 
     private void stopBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_stopBtnMouseClicked
         // TODO add your handling code here:
         try{
-            //if(thread!=null)
-            //{
                 thread.stop();
-                state = "stopped";
-            //}
+                thread = null;
         }
         catch(Exception e)
         {
-            
+            System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_stopBtnMouseClicked
 
@@ -223,10 +200,18 @@ public class UserWin extends javax.swing.JFrame {
             SongManager sm   = new SongManager();
             String artist = searchArtistTxt.getText();
             List <SongRecord> recordList = sm.findSongByArtist(artist);
+            if (recordList==null || recordList.isEmpty())
+            {
+                songNameLabel.setText("Result Not Found!");
+                thread = null;
+                return;
+            }
             currentRecordId = recordList.get(0).getSong().getId();
             songNameLabel.setText(currentRecordId);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserWin.class.getName()).log(Level.SEVERE, null, ex);
+            
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            songNameLabel.setText("Result Not Found!");
         }
     }//GEN-LAST:event_searchBtnMouseClicked
 
