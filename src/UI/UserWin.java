@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import musicstreamer.MusicStreamer;
 import musicstreamer.SongManager;
@@ -18,9 +19,38 @@ import musicstreamer.SongRecord;
  *
  * @author 018639476
  */
-public class UserWin extends javax.swing.JFrame {
+
+class MyPlayer implements Runnable
+{
     Player player;
+
+    //recieve a javazoom.jl.player
+    public MyPlayer(String songRecordId) {
+        this.player = MusicStreamer.mp3play("data\\"+songRecordId+".mp3");;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void run() {
+        try {
+            player.play();
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(MyPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+
+public class UserWin extends javax.swing.JFrame {
     String currentRecordId;
+    Thread thread;
+    String state;//stopped, started, paused
 
     /**
      * Creates new form UserWin
@@ -28,6 +58,7 @@ public class UserWin extends javax.swing.JFrame {
     public UserWin() {
         initComponents();
         currentRecordId = "";
+        state = "stopped";
        
     }
 
@@ -141,13 +172,32 @@ public class UserWin extends javax.swing.JFrame {
     private void playBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playBtnMouseClicked
         // TODO add your handling code here:
         try{
-            player = MusicStreamer.mp3play("data\\"+currentRecordId+".mp3");
-            player.play();
-            songNameLabel.setText("");
+            if(thread==null)
+            {
+                MyPlayer myPlayer = new MyPlayer(currentRecordId);
+                thread = new Thread(myPlayer);
+                thread.start();
+                state = "started";
+            }
+            else
+            {
+                if(state.equals("paused"))
+                {
+                    thread.notify();
+                    state = "started";
+                }
+                else if(state.equals("stopped"))
+                {
+                    MyPlayer myPlayer = new MyPlayer(currentRecordId);
+                    thread = new Thread(myPlayer);
+                    thread.start();
+                    state = "started";
+                }
+            }
         }
         catch(Exception e)
         {
-            
+            System.out.println(e.getMessage());
         }
         
     }//GEN-LAST:event_playBtnMouseClicked
@@ -155,7 +205,11 @@ public class UserWin extends javax.swing.JFrame {
     private void stopBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_stopBtnMouseClicked
         // TODO add your handling code here:
         try{
-            //player.wait(); how to stop player?
+            //if(thread!=null)
+            //{
+                thread.stop();
+                state = "stopped";
+            //}
         }
         catch(Exception e)
         {
