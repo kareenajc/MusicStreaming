@@ -18,6 +18,7 @@ import musicstreamer.SongRecord;
 /**
  *
  * @author 018639476
+ * @author 015222816
  */
 public class UserWin extends javax.swing.JFrame {
     Player player;
