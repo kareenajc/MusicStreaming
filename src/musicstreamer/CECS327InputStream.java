@@ -66,7 +66,7 @@ public class CECS327InputStream extends InputStream {
      }
 
     /**
-     * getNextBuff reads the buffer. The fuction is used to 
+     * getNextBuff reads the buffer. The function is used to 
      * simplify the integration of UDP sockets.
     */
     protected void getBuff(int fragment) throws IOException
