@@ -5,12 +5,19 @@
  */
 package UI;
 
+import javax.swing.JOptionPane;
+import java.util.*;
+import musicstreamer.User;
+import java.lang.NullPointerException;
+        
 /**
  *
  * @author 018639476
+ * @author 015429789
  */
 public class Login extends javax.swing.JFrame {
-
+    UserRegistration reg = new UserRegistration();
+    
     /**
      * Creates new form Login
      */
@@ -31,7 +38,8 @@ public class Login extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         usernameTextField = new javax.swing.JTextField();
         LoginBtn = new javax.swing.JButton();
-        passwordTextField = new javax.swing.JTextField();
+        passwordTextField = new javax.swing.JPasswordField();
+        registerLink = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -52,21 +60,33 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        registerLink.setText("Not registered? Create an account");
+        registerLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                registerLinkMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(173, 173, 173)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(LoginBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                    .addComponent(usernameTextField)
-                    .addComponent(passwordTextField))
-                .addContainerGap(442, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(173, 173, 173)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(27, 27, 27)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passwordTextField)
+                            .addComponent(usernameTextField)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(226, 226, 226)
+                        .addComponent(registerLink)))
+                .addContainerGap(318, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -81,7 +101,9 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(passwordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(LoginBtn)
-                .addContainerGap(328, Short.MAX_VALUE))
+                .addGap(48, 48, 48)
+                .addComponent(registerLink)
+                .addContainerGap(249, Short.MAX_VALUE))
         );
 
         pack();
@@ -92,15 +114,38 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_usernameTextFieldActionPerformed
 
     private void LoginBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseClicked
-        // TODO add your handling code here:
-        String username = usernameTextField.getText();
-        String password = passwordTextField.getText();
-        if(username.equals("user") && password.equals("pass"))
-        {
-            UserWin userWin = new UserWin();
-            userWin.setVisible(true);
+        //get user input
+        String username = usernameTextField.getText().toLowerCase().trim();
+        String password = passwordTextField.getText().trim();
+        
+        try{
+            System.out.println("getting user");
+            HashMap<String, User> users = reg.getUsers();
+            User user = users.get(username); //if username does not exist, NullPointerException will appear
+            
+            //check if password matches
+            if(password.equals(user.getPassword())) //username exists, so check if passwords match
+            {
+                UserWin userWin = new UserWin();
+                userWin.setVisible(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(rootPane, "Incorrect password");
+            }
+            
+            //clear text fields for next login attempt
+            usernameTextField.setText("");
+            passwordTextField.setText("");
+            
+        }catch(NullPointerException e){
+            JOptionPane.showMessageDialog(rootPane, "Username is not registered");
         }
     }//GEN-LAST:event_LoginBtnMouseClicked
+
+    private void registerLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registerLinkMouseClicked
+        // TODO add your handling code here:
+        reg.setVisible(true);
+    }//GEN-LAST:event_registerLinkMouseClicked
 
     /**
      * @param args the command line arguments
@@ -141,7 +186,8 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton LoginBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JTextField passwordTextField;
+    private javax.swing.JPasswordField passwordTextField;
+    private javax.swing.JLabel registerLink;
     private javax.swing.JTextField usernameTextField;
     // End of variables declaration//GEN-END:variables
 }

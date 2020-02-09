@@ -34,9 +34,12 @@ public class MusicStreamer {
 //        Gson g = new Gson();
 //        String jsonObj = "{'id':'786876','name':'kjhkj'}";
         try{
+            HashMap<String, User> users = new HashMap<String, User>();
+            
             Login loginWin  = new Login();
             loginWin.setVisible(true);
           
+            
             SongManager sm = new SongManager();
           
             //test finding songs by artist
