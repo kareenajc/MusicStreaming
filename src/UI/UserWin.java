@@ -114,6 +114,11 @@ public class UserWin extends javax.swing.JFrame {
 
         WarningText.setText("-");
 
+        SongList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                SongListValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(SongList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -193,7 +198,6 @@ public class UserWin extends javax.swing.JFrame {
              //creating string variables for artistText and nameText
             String artistText = searchArtistTxt.getText();
             String titleText = searchTitletxt.getText();
-            String musicList[];
             selection = searchByArtistOrName(artistText, titleText);
             SongManager sm   = new SongManager();
             
@@ -208,11 +212,8 @@ public class UserWin extends javax.swing.JFrame {
                 //find song by name
                 //for loop to generate multiple songs
                 DefaultListModel<String> listOfSongs = new DefaultListModel<>();
-                musicList = new String[recordList.size()];
                 for(int i = 0; i < recordList.size(); i++){
-                    currentRecordId = recordList.get(i).getSong().getId();
-                    musicList[i] = currentRecordId;
-                    listOfSongs.addElement(currentRecordId);
+                    listOfSongs.addElement(recordList.get(i).getSong().getTitle()+" _ "+recordList.get(i).getSong().getId());
                 }
                 SongList.setModel(listOfSongs);
                 break;
@@ -227,18 +228,15 @@ public class UserWin extends javax.swing.JFrame {
                 //for loop to generate multiple song
                 //connect song to search
                 DefaultListModel<String> listOfSongs = new DefaultListModel<>();
-                musicList = new String[recordList.size()];
                 for(int i = 0; i < recordList.size(); i++){
-                    currentRecordId = recordList.get(i).getSong().getId();
-                    musicList[i] = currentRecordId;
-                    listOfSongs.addElement(currentRecordId);
+                    listOfSongs.addElement(recordList.get(i).getSong().getTitle()+" _ "+recordList.get(i).getSong().getId());
                 }
                 SongList.setModel(listOfSongs);
                 break;
             }
             //if both fields are filled
             else if(selection == 3){
-                String message = "Error";
+                String message = "Error! choose only one field.";
                 WarningText.setText(message);
                 break;
             }
@@ -252,6 +250,7 @@ public class UserWin extends javax.swing.JFrame {
     private void playBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playBtnActionPerformed
         // TODO add your handling code here:
         try{
+            //SongList.
             player = MusicStreamer.mp3play("data\\"+currentRecordId+".mp3");
             player.play();
             isPlaying = true;
@@ -276,6 +275,13 @@ public class UserWin extends javax.swing.JFrame {
         
         }
     }//GEN-LAST:event_stopBtnActionPerformed
+
+    private void SongListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_SongListValueChanged
+        // TODO add your handling code here:
+        String songarrts = SongList.getSelectedValue();
+        String[] attrs = songarrts.split(" _ ");
+        currentRecordId = attrs[1];
+    }//GEN-LAST:event_SongListValueChanged
 
     /**
      * @param args the command line arguments
