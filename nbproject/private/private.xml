@@ -3,12 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/Artist.java</file>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/music.json</file>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/MusicStreamer.java</file>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/Song.java</file>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/SongRecord.java</file>
-            <file>file:/C:/Users/018639476/Documents/NetBeansProjects/MusicStreamer/src/musicstreamer/Release.java</file>
+            <file>file:/C:/Users/yodaj/OneDrive/Documents/NetBeansProjects/MusicStreaming/src/UI/UserWin.java</file>
+            <file>file:/C:/Users/yodaj/OneDrive/Documents/NetBeansProjects/MusicStreaming/src/musicstreamer/CECS327InputStream.java</file>
+            <file>file:/C:/Users/yodaj/OneDrive/Documents/NetBeansProjects/MusicStreaming/src/UI/Login.java</file>
+            <file>file:/C:/Users/yodaj/OneDrive/Documents/NetBeansProjects/MusicStreaming/src/musicstreamer/SongManager.java</file>
+            <file>file:/C:/Users/yodaj/OneDrive/Documents/NetBeansProjects/MusicStreaming/src/musicstreamer/MusicStreamer.java</file>
         </group>
     </open-files>
 </project-private>
