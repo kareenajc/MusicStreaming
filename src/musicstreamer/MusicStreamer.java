@@ -56,6 +56,14 @@ public class MusicStreamer {
             {
                 System.out.println(songs.get(i).getSong().getTitle() + " by " + songs.get(i).getArtist().getName());
             }
+            
+            User u = new User("pardis", "kh", "12345", "pass");
+            u.addSongToPlayList(l.get(0).getSong().getId());
+            u.addSongToPlayList(l.get(1).getSong().getId());
+            String uJson = u.toJson();
+            System.out.println(uJson);
+            //User u2 = gson.fromJson(uJson, User.class);
+            u.saveUser(); //stores the user to a json file
 
         }
         catch(Exception e)

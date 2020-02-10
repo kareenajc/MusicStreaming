@@ -4,27 +4,32 @@
  * and open the template in the editor.
  */
 package musicstreamer;
+import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
- *
+ *@author 018639476
  * @author kareena chan
  */
-public class User {
+public class User //implements Serializable
+{
     String fName;
     String lName;
-    String username;
+    String username;//should be unique for each user
     String password;
-    HashMap<String, List<Integer>> playlists;
-    
-    public User(String firstName, String lastName, String user, String pass){
-        String fName = firstName;
-        String lName = lastName;
-        String username = user;
-        String password = pass;
-        HashMap<String, List<Integer>> playlists = new HashMap<String, List<Integer>>(); //key: playlist name. value: list of song indexes
-    }
+    List<String> playList; //list of user's favorite song ids
 
+    public User(String fName, String lName, String username, String password) {
+        this.fName = fName;
+        this.lName = lName;
+        this.username = username;
+        this.password = password;
+        playList = new ArrayList<String>();
+    }
+    
     public String getfName() {
         return fName;
     }
@@ -57,13 +62,54 @@ public class User {
         this.password = password;
     }
     
-    void createPlaylist(){
-        ArrayList<Integer> playlistSongs = new ArrayList<Integer>();
-        
-        
+        public List<String> getPlayList() {
+        return playList;
+    }
+
+    public void setPlayList(List<String> playList) {
+        this.playList = playList;
     }
     
-    void deletePlaylist(){
+    public void addSongToPlayList(String id){
+        if(!playList.contains(id))//no duplicate
+            playList.add(id);
+    }
+    
+    public void removeSongFromPlayList(String id) 
+    {
+        for(int i = 0; i<playList.size(); i++)
+        {
+            if(playList.get(i).equals(id))
+                playList.remove(i);
+        }
+    }
+    
+    public void deletePlaylist(){
+        playList = new ArrayList<>();
+    }
+    
+    public String toJson()
+    {
+        //converting User object to Json
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        return json;
+    }
+    
+    public boolean saveUser() 
+    {
+        try{
+            String userJson = this.toJson();
+            FileWriter writer = new FileWriter("data\\users\\"+this.username+".json");
+            writer.write(userJson);
+            writer.close();
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
         
     }
+
 }
