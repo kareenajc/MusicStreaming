@@ -114,11 +114,6 @@ public class UserWin extends javax.swing.JFrame {
 
         WarningText.setText("-");
 
-        SongList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(SongList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -133,7 +128,7 @@ public class UserWin extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
                             .addGap(198, 198, 198)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel2)
@@ -147,17 +142,16 @@ public class UserWin extends javax.swing.JFrame {
                                     .addComponent(jLabel1)
                                     .addGap(18, 18, 18)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                         .addComponent(songNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(WarningText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGap(5, 5, 5))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addGap(326, 326, 326)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(playBtn))
+                            .addGap(523, 523, 523)
+                            .addComponent(playBtn)
                             .addGap(45, 45, 45)
                             .addComponent(stopBtn))))
-                .addContainerGap(370, Short.MAX_VALUE))
+                .addContainerGap(227, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -180,9 +174,9 @@ public class UserWin extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(songNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(playBtn)
                     .addComponent(stopBtn))
@@ -219,16 +213,8 @@ public class UserWin extends javax.swing.JFrame {
                     currentRecordId = recordList.get(i).getSong().getId();
                     musicList[i] = currentRecordId;
                     listOfSongs.addElement(currentRecordId);
-                    
-                    //connect song to search
-                    
                 }
-               
-                for(int j = 0; j < musicList.length; j++){
-                    songNameLabel.setText(musicList[j]);
-                    
-                    System.out.println(musicList[j]);
-                }
+                SongList.setModel(listOfSongs);
                 break;
             }
             //if name text is filled
@@ -238,10 +224,16 @@ public class UserWin extends javax.swing.JFrame {
                 //implement findSongbyTitle
                 List <SongRecord> recordList = sm.findSongByTitle(titleText);
                 //find song by title
-                //for loop to generate multiple songs
-                currentRecordId = recordList.get(0).getSong().getId();
+                //for loop to generate multiple song
                 //connect song to search
-                songNameLabel.setText(currentRecordId);
+                DefaultListModel<String> listOfSongs = new DefaultListModel<>();
+                musicList = new String[recordList.size()];
+                for(int i = 0; i < recordList.size(); i++){
+                    currentRecordId = recordList.get(i).getSong().getId();
+                    musicList[i] = currentRecordId;
+                    listOfSongs.addElement(currentRecordId);
+                }
+                SongList.setModel(listOfSongs);
                 break;
             }
             //if both fields are filled
