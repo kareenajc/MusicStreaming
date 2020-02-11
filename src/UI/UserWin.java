@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import musicstreamer.MusicStreamer;
 import musicstreamer.SongManager;
@@ -20,10 +21,37 @@ import musicstreamer.SongRecord;
  * @author 018639476
  * @author 015222816
  */
-public class UserWin extends javax.swing.JFrame {
+
+class MyPlayer implements Runnable
+{
     Player player;
+
+    //recieve a javazoom.jl.player
+    public MyPlayer(String songRecordId) {
+        this.player = MusicStreamer.mp3play("data\\"+songRecordId+".mp3");;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    @Override
+    public void run() {
+        try {
+            player.play();
+        } catch (JavaLayerException ex) {
+            Logger.getLogger(MyPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+
+public class UserWin extends javax.swing.JFrame {
     String currentRecordId;
-    boolean isPlaying;
+    Thread thread;
 
     /**
      * Creates new form UserWin
@@ -31,7 +59,6 @@ public class UserWin extends javax.swing.JFrame {
     public UserWin() {
         initComponents();
         currentRecordId = "";
-       
     }
     //function to decide to search by artist or song title
     public int searchByArtistOrName(String artistText, String titleText){
@@ -114,6 +141,11 @@ public class UserWin extends javax.swing.JFrame {
 
         WarningText.setText("-");
 
+        SongList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                SongListValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(SongList);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -193,7 +225,6 @@ public class UserWin extends javax.swing.JFrame {
              //creating string variables for artistText and nameText
             String artistText = searchArtistTxt.getText();
             String titleText = searchTitletxt.getText();
-            String musicList[];
             selection = searchByArtistOrName(artistText, titleText);
             SongManager sm   = new SongManager();
             
@@ -208,11 +239,8 @@ public class UserWin extends javax.swing.JFrame {
                 //find song by name
                 //for loop to generate multiple songs
                 DefaultListModel<String> listOfSongs = new DefaultListModel<>();
-                musicList = new String[recordList.size()];
                 for(int i = 0; i < recordList.size(); i++){
-                    currentRecordId = recordList.get(i).getSong().getId();
-                    musicList[i] = currentRecordId;
-                    listOfSongs.addElement(currentRecordId);
+                    listOfSongs.addElement(recordList.get(i).getSong().getTitle()+" _ "+recordList.get(i).getSong().getId());
                 }
                 SongList.setModel(listOfSongs);
                 break;
@@ -227,18 +255,15 @@ public class UserWin extends javax.swing.JFrame {
                 //for loop to generate multiple song
                 //connect song to search
                 DefaultListModel<String> listOfSongs = new DefaultListModel<>();
-                musicList = new String[recordList.size()];
                 for(int i = 0; i < recordList.size(); i++){
-                    currentRecordId = recordList.get(i).getSong().getId();
-                    musicList[i] = currentRecordId;
-                    listOfSongs.addElement(currentRecordId);
+                    listOfSongs.addElement(recordList.get(i).getSong().getTitle()+" _ "+recordList.get(i).getSong().getId());
                 }
                 SongList.setModel(listOfSongs);
                 break;
             }
             //if both fields are filled
             else if(selection == 3){
-                String message = "Error";
+                String message = "Error! choose only one field.";
                 WarningText.setText(message);
                 break;
             }
@@ -252,30 +277,37 @@ public class UserWin extends javax.swing.JFrame {
     private void playBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playBtnActionPerformed
         // TODO add your handling code here:
         try{
-            player = MusicStreamer.mp3play("data\\"+currentRecordId+".mp3");
-            player.play();
-            isPlaying = true;
-           
-            
-            
+            if(thread==null && currentRecordId!=null && !currentRecordId.equals(""))
+            {
+                MyPlayer myPlayer = new MyPlayer(currentRecordId);
+                thread = new Thread(myPlayer);
+                thread.start();
+            }
         }
         catch(Exception e)
         {
-            
+            System.out.println(e.getMessage());
         }
-    }//GEN-LAST:event_playBtnActionPerformed
+    }
 
     private void stopBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopBtnActionPerformed
         // TODO add your handling code here:
         try{
-            isPlaying = false;
-            player.close();
+                thread.stop();
+                thread = null;
         }
         catch(Exception e)
         {
-        
+            System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_stopBtnActionPerformed
+
+    private void SongListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_SongListValueChanged
+        // TODO add your handling code here:
+        String songarrts = SongList.getSelectedValue();
+        String[] attrs = songarrts.split(" _ ");
+        currentRecordId = attrs[1];
+    }//GEN-LAST:event_SongListValueChanged
 
     /**
      * @param args the command line arguments
