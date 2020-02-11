@@ -139,6 +139,7 @@ public class UserWin extends javax.swing.JFrame {
         durationLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         releaseNameLabel = new javax.swing.JLabel();
+        DeletFromPlaylistBtn = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -221,6 +222,13 @@ public class UserWin extends javax.swing.JFrame {
 
         releaseNameLabel.setText("-");
 
+        DeletFromPlaylistBtn.setText("Delete");
+        DeletFromPlaylistBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DeletFromPlaylistBtnMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -228,7 +236,9 @@ public class UserWin extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(savePlaylistBtn)
-                .addGap(217, 217, 217))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(DeletFromPlaylistBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(161, 161, 161))
             .addGroup(layout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,7 +343,9 @@ public class UserWin extends javax.swing.JFrame {
                             .addComponent(stopBtn)
                             .addComponent(jButton1))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(savePlaylistBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(savePlaylistBtn)
+                    .addComponent(DeletFromPlaylistBtn))
                 .addGap(35, 35, 35))
         );
 
@@ -482,6 +494,14 @@ public class UserWin extends javax.swing.JFrame {
         durationLabel.setText((sr.getSong().getDuration()/60)+" minutes");
     }//GEN-LAST:event_playlist_UIMouseClicked
 
+    private void DeletFromPlaylistBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeletFromPlaylistBtnMouseClicked
+        // TODO add your handling code here:
+        user.deletePlaylist();
+        DefaultListModel<String> listOfFavoriteSongs = new DefaultListModel<>();
+        userPlaylist = new ArrayList<>();
+        playlist_UI.setModel(listOfFavoriteSongs);
+    }//GEN-LAST:event_DeletFromPlaylistBtnMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -518,6 +538,7 @@ public class UserWin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton DeletFromPlaylistBtn;
     private javax.swing.JList<String> SongList;
     private javax.swing.JLabel WarningText;
     private javax.swing.JLabel artistLabel;

@@ -80,7 +80,10 @@ public class User //implements Serializable
         for(int i = 0; i<playList.size(); i++)
         {
             if(playList.get(i).equals(id))
+            {
                 playList.remove(i);
+                break;
+            }
         }
     }
     
