@@ -5,8 +5,10 @@
  */
 package UI;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import javax.swing.DefaultListModel;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import javazoom.jl.player.Player;
 import musicstreamer.MusicStreamer;
 import musicstreamer.SongManager;
 import musicstreamer.SongRecord;
+import musicstreamer.User;
 
 /**
  *
@@ -43,8 +46,8 @@ class MyPlayer implements Runnable
     public void run() {
         try {
             player.play();
-        } catch (JavaLayerException ex) {
-            Logger.getLogger(MyPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }
@@ -52,13 +55,34 @@ class MyPlayer implements Runnable
 public class UserWin extends javax.swing.JFrame {
     String currentRecordId;
     Thread thread;
+    User user;
+    List<SongRecord> userPlaylist;
+    SongManager sm;
 
     /**
      * Creates new form UserWin
      */
-    public UserWin() {
+    public UserWin(User user) {
         initComponents();
         currentRecordId = "";
+        this.user = user;
+        userPlaylist = new ArrayList<>();
+        try{
+            sm = new SongManager();
+            DefaultListModel<String> listOfFavoriteSongs = new DefaultListModel<>();
+            for(int i = 0; i<user.getPlayList().size(); i++)
+            {
+                userPlaylist.add(sm.findSongById(user.getPlayList().get(i)));
+                listOfFavoriteSongs.addElement(userPlaylist.get(i).getSong().getTitle()+ " _ " + 
+                    userPlaylist.get(i).getArtist().getName()+" _ "+
+                    userPlaylist.get(i).getSong().getId());
+            }
+            playlist_UI.setModel(listOfFavoriteSongs);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
     //function to decide to search by artist or song title
     public int searchByArtistOrName(String artistText, String titleText){
@@ -103,6 +127,18 @@ public class UserWin extends javax.swing.JFrame {
         WarningText = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         SongList = new javax.swing.JList<>();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        playlist_UI = new javax.swing.JList<>();
+        savePlaylistBtn = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        artistLabel = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        termsLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        durationLabel = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        releaseNameLabel = new javax.swing.JLabel();
 
         jTextField1.setText("jTextField1");
 
@@ -124,7 +160,7 @@ public class UserWin extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("SongName");
+        jLabel1.setText("Song Name");
 
         songNameLabel.setText("-");
 
@@ -141,94 +177,179 @@ public class UserWin extends javax.swing.JFrame {
 
         WarningText.setText("-");
 
-        SongList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                SongListValueChanged(evt);
+        SongList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SongListMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(SongList);
+
+        jButton1.setText("Add to Playlist");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
+        playlist_UI.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                playlist_UIMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(playlist_UI);
+
+        savePlaylistBtn.setText("Save Playlist");
+        savePlaylistBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                savePlaylistBtnMouseClicked(evt);
+            }
+        });
+
+        jLabel4.setText("Artist Name");
+
+        artistLabel.setText("-");
+
+        jLabel6.setText("Terms");
+
+        termsLabel.setText("-");
+
+        jLabel5.setText("Duration");
+
+        durationLabel.setText("-");
+
+        jLabel7.setText("Release Name");
+
+        releaseNameLabel.setText("-");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(savePlaylistBtn)
+                .addGap(217, 217, 217))
             .addGroup(layout.createSequentialGroup()
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(searchArtistTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(searchTitletxt, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(302, 302, 302)
-                        .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(198, 198, 198)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel3))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(searchTitletxt, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(searchBtn)
-                                        .addComponent(searchArtistTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addGap(18, 18, 18)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                        .addComponent(songNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(WarningText, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGap(5, 5, 5))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addGap(523, 523, 523)
-                            .addComponent(playBtn)
-                            .addGap(45, 45, 45)
-                            .addComponent(stopBtn))))
-                .addContainerGap(227, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(searchBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(54, 54, 54)
+                                .addComponent(WarningText, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(playBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(stopBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel7))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(artistLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+                                            .addComponent(termsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(durationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(releaseNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(35, 35, 35)
+                                        .addComponent(songNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(32, 32, 32)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addGap(98, 98, 98))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(welcomeLabel)
-                .addGap(47, 47, 47)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(searchArtistTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(searchTitletxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addComponent(searchBtn)
-                .addGap(21, 21, 21)
-                .addComponent(WarningText)
+                .addGap(73, 73, 73)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(welcomeLabel)
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(searchArtistTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(searchTitletxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(searchBtn)
+                            .addComponent(WarningText))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(songNameLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(artistLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(releaseNameLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(termsLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(durationLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(playBtn)
+                            .addComponent(stopBtn)
+                            .addComponent(jButton1))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(songNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(playBtn)
-                    .addComponent(stopBtn))
-                .addGap(168, 168, 168))
+                .addComponent(savePlaylistBtn)
+                .addGap(35, 35, 35))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchBtnMouseClicked
-        try {
-            int selection;
-            // TODO add your handling code here:
-             //creating string variables for artistText and nameText
-            String artistText = searchArtistTxt.getText();
-            String titleText = searchTitletxt.getText();
-            selection = searchByArtistOrName(artistText, titleText);
-            SongManager sm   = new SongManager();
+
+        int selection;
+        // TODO add your handling code here:
+         //creating string variables for artistText and nameText
+        String artistText = searchArtistTxt.getText();
+        String titleText = searchTitletxt.getText();
+        selection = searchByArtistOrName(artistText, titleText);
             
-            while (true){
+        while (true){
             //if artist text is filled
             if(selection == 1){
                 
@@ -267,17 +388,18 @@ public class UserWin extends javax.swing.JFrame {
                 WarningText.setText(message);
                 break;
             }
-            }
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserWin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_searchBtnMouseClicked
 
-    private void playBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playBtnActionPerformed
+    private void playBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
         // TODO add your handling code here:
+        if(thread!=null)
+        {
+            thread.stop();
+            thread = null;
+        }
         try{
-            if(thread==null && currentRecordId!=null && !currentRecordId.equals(""))
+            if(currentRecordId!=null && !currentRecordId.equals(""))
             {
                 MyPlayer myPlayer = new MyPlayer(currentRecordId);
                 thread = new Thread(myPlayer);
@@ -302,12 +424,63 @@ public class UserWin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_stopBtnActionPerformed
 
-    private void SongListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_SongListValueChanged
+    //add to favorite button
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+        String song = SongList.getSelectedValue();
+        if(song!=null && !song.equals(""))
+        {
+            String[] attrs = song.split(" _ ");
+            String id = attrs[1];
+            user.getPlayList().add(id);
+        }  
+        DefaultListModel<String> listOfFavoriteSongs = new DefaultListModel<>();
+        userPlaylist = new ArrayList<>();
+        for(int i = 0; i<user.getPlayList().size(); i++)
+        {
+            String songId = user.getPlayList().get(i);
+            userPlaylist.add(sm.findSongById(songId));
+            listOfFavoriteSongs.addElement(userPlaylist.get(i).getSong().getTitle()+ " _ " + 
+                userPlaylist.get(i).getArtist().getName()+" _ "+
+                userPlaylist.get(i).getSong().getId());
+        }
+        playlist_UI.setModel(listOfFavoriteSongs);
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void savePlaylistBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_savePlaylistBtnMouseClicked
+        // TODO add your handling code here:
+        boolean saved = user.saveUser();
+        if(saved)
+            System.out.println("saved user playlist.");
+        else
+            System.out.println("could not save playlist!");
+    }//GEN-LAST:event_savePlaylistBtnMouseClicked
+
+    private void SongListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SongListMouseClicked
         // TODO add your handling code here:
         String songarrts = SongList.getSelectedValue();
         String[] attrs = songarrts.split(" _ ");
         currentRecordId = attrs[1];
-    }//GEN-LAST:event_SongListValueChanged
+        SongRecord sr = sm.findSongById(currentRecordId);
+        songNameLabel.setText(sr.getSong().getTitle());
+        artistLabel.setText(sr.getArtist().getName());
+        releaseNameLabel.setText(sr.getRelease().getName());
+        termsLabel.setText(sr.getArtist().getTerms());
+        durationLabel.setText((sr.getSong().getDuration()/60)+" minutes");
+    }//GEN-LAST:event_SongListMouseClicked
+
+    private void playlist_UIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playlist_UIMouseClicked
+        // TODO add your handling code here:
+        String songarrts = playlist_UI.getSelectedValue();
+        String[] attrs = songarrts.split(" _ ");
+        currentRecordId = attrs[2];
+        SongRecord sr = sm.findSongById(currentRecordId);
+        songNameLabel.setText(sr.getSong().getTitle());
+        artistLabel.setText(sr.getArtist().getName());
+        releaseNameLabel.setText(sr.getRelease().getName());
+        termsLabel.setText(sr.getArtist().getTerms());
+        durationLabel.setText((sr.getSong().getDuration()/60)+" minutes");
+    }//GEN-LAST:event_playlist_UIMouseClicked
 
     /**
      * @param args the command line arguments
@@ -339,7 +512,7 @@ public class UserWin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UserWin().setVisible(true);
+                //new UserWin().setVisible(true);
             }
         });
     }
@@ -347,17 +520,29 @@ public class UserWin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> SongList;
     private javax.swing.JLabel WarningText;
+    private javax.swing.JLabel artistLabel;
+    private javax.swing.JLabel durationLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JButton playBtn;
+    private javax.swing.JList<String> playlist_UI;
+    private javax.swing.JLabel releaseNameLabel;
+    private javax.swing.JButton savePlaylistBtn;
     private javax.swing.JTextField searchArtistTxt;
     private javax.swing.JButton searchBtn;
     private javax.swing.JTextField searchTitletxt;
     private javax.swing.JLabel songNameLabel;
     private javax.swing.JButton stopBtn;
+    private javax.swing.JLabel termsLabel;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }

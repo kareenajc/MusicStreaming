@@ -5,6 +5,12 @@
  */
 package UI;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import java.io.FileReader;
+import musicstreamer.SongRecord;
+import musicstreamer.User;
+
 /**
  *
  * @author 018639476
@@ -95,11 +101,28 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         String username = usernameTextField.getText();
         String password = passwordTextField.getText();
-        if(username.equals("user") && password.equals("pass"))
-        {
-            UserWin userWin = new UserWin();
-            userWin.setVisible(true);
+        
+        //make user object from json file in data/users folder
+        try{
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader("data\\users\\"+username+".json"));
+            User user = gson.fromJson(reader, User.class);
+            System.out.println(user.getUsername()+" "+user.getPassword());
+            if(username.equals(user.getUsername()) && password.equals(user.getPassword()))
+            {
+                UserWin userWin = new UserWin(user);
+                userWin.setVisible(true);
+            }
+            else
+            {
+                System.out.println("wrong username or password!");
+            }
         }
+        catch(Exception e)
+        {
+            System.out.println("userName does not exist!");
+        }
+        
     }//GEN-LAST:event_LoginBtnMouseClicked
 
     /**
