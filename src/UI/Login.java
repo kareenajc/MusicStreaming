@@ -102,10 +102,6 @@ public class Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void usernameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_usernameTextFieldActionPerformed
-
     private void LoginBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseClicked
         // TODO add your handling code here:
         String username = usernameTextField.getText();
@@ -136,10 +132,6 @@ public class Login extends javax.swing.JFrame {
             passwordTextField.setText("");
         }
     }//GEN-LAST:event_LoginBtnMouseClicked
-
-    private void registerLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registerLinkMouseClicked
-
-    }//GEN-LAST:event_registerLinkMouseClicked
 
     /**
      * @param args the command line arguments
