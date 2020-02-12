@@ -5,10 +5,10 @@
  */
 package UI;
 
-import javax.swing.JOptionPane;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import java.io.FileReader;
 import musicstreamer.User;
-import java.lang.NullPointerException;
         
 /**
  *
@@ -16,8 +16,6 @@ import java.lang.NullPointerException;
  * @author 015429789
  */
 public class Login extends javax.swing.JFrame {
-    UserRegistration reg = new UserRegistration();
-    
     /**
      * Creates new form Login
      */
@@ -38,8 +36,8 @@ public class Login extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         usernameTextField = new javax.swing.JTextField();
         LoginBtn = new javax.swing.JButton();
-        passwordTextField = new javax.swing.JPasswordField();
-        registerLink = new javax.swing.JLabel();
+        passwordTextField = new javax.swing.JTextField();
+        loginFeedbackMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,12 +58,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        registerLink.setText("Not registered? Create an account");
-        registerLink.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                registerLinkMouseClicked(evt);
-            }
-        });
+        loginFeedbackMessage.setText("jLabel3");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -80,18 +73,20 @@ public class Login extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(LoginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(passwordTextField)
-                            .addComponent(usernameTextField)))
+                            .addComponent(LoginBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .addComponent(usernameTextField)
+                            .addComponent(passwordTextField)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(226, 226, 226)
-                        .addComponent(registerLink)))
-                .addContainerGap(318, Short.MAX_VALUE))
+                        .addGap(278, 278, 278)
+                        .addComponent(loginFeedbackMessage)))
+                .addContainerGap(442, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(148, 148, 148)
+                .addGap(76, 76, 76)
+                .addComponent(loginFeedbackMessage)
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(usernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -101,9 +96,7 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(passwordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(48, 48, 48)
                 .addComponent(LoginBtn)
-                .addGap(48, 48, 48)
-                .addComponent(registerLink)
-                .addContainerGap(249, Short.MAX_VALUE))
+                .addContainerGap(328, Short.MAX_VALUE))
         );
 
         pack();
@@ -114,37 +107,38 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_usernameTextFieldActionPerformed
 
     private void LoginBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginBtnMouseClicked
-        //get user input
-        String username = usernameTextField.getText().toLowerCase().trim();
-        String password = passwordTextField.getText().trim();
+        // TODO add your handling code here:
+        String username = usernameTextField.getText();
+        String password = passwordTextField.getText();
         
+        //make user object from json file in data/users folder
         try{
-            System.out.println("getting user");
-            HashMap<String, User> users = reg.getUsers();
-            User user = users.get(username); //if username does not exist, NullPointerException will appear
-            
-            //check if password matches
-            if(password.equals(user.getPassword())) //username exists, so check if passwords match
+            Gson gson = new Gson();
+            JsonReader reader = new JsonReader(new FileReader("data\\users\\"+username+".json"));
+            User user = gson.fromJson(reader, User.class);
+            System.out.println(user.getUsername()+" "+user.getPassword());
+            if(username.equals(user.getUsername()) && password.equals(user.getPassword()))
             {
-                UserWin userWin = new UserWin();
+                UserWin userWin = new UserWin(user);
                 userWin.setVisible(true);
             }
-            else{
-                JOptionPane.showMessageDialog(rootPane, "Incorrect password");
+            else
+            {
+                System.out.println("wrong username or password!");
+                loginFeedbackMessage.setText("Incorrect password");
+                passwordTextField.setText("");
             }
-            
-            //clear text fields for next login attempt
-            usernameTextField.setText("");
+        }
+        catch(Exception e)
+        {
+            System.out.println("userName does not exist!");
+            loginFeedbackMessage.setText("Username does not exist");
             passwordTextField.setText("");
-            
-        }catch(NullPointerException e){
-            JOptionPane.showMessageDialog(rootPane, "Username is not registered");
         }
     }//GEN-LAST:event_LoginBtnMouseClicked
 
     private void registerLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_registerLinkMouseClicked
-        // TODO add your handling code here:
-        reg.setVisible(true);
+
     }//GEN-LAST:event_registerLinkMouseClicked
 
     /**
@@ -186,8 +180,8 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JButton LoginBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPasswordField passwordTextField;
-    private javax.swing.JLabel registerLink;
+    private javax.swing.JLabel loginFeedbackMessage;
+    private javax.swing.JTextField passwordTextField;
     private javax.swing.JTextField usernameTextField;
     // End of variables declaration//GEN-END:variables
 }
